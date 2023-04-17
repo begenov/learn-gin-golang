@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"net/http"
 	"os"
 
 	"github.com/begenov/learn-gin-golang/controller"
@@ -30,7 +31,8 @@ func main() {
 	mux := gin.New()
 
 	mux.Use(gin.Recovery(), middlewares.Logger(),
-		middlewares.BasicAuth(), gindump.Dump())
+		middlewares.BasicAuth(), gindump.Dump(),
+	)
 
 	mux.GET("/videos", func(ctx *gin.Context) {
 		ctx.JSON(200, VideoController.FindAll())
@@ -38,10 +40,17 @@ func main() {
 	})
 
 	mux.POST("/videos", func(ctx *gin.Context) {
-		ctx.JSON(200, VideoController.Save(ctx))
+		err := VideoController.Save(ctx)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"ERROR": err.Error(),
+			})
+		} else {
+			ctx.JSON(http.StatusOK, gin.H{"MESSAGE": "vIDEO INPUT IS VALID!!!"})
+		}
 
 	})
 
-	mux.Run(":8080")
+	mux.Run(":8090")
 
 }
