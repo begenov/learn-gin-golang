@@ -30,26 +30,39 @@ func main() {
 
 	mux := gin.New()
 
+	mux.Static("/css", "./templates/css")
+
+	mux.LoadHTMLGlob("templates/*.html")
+
+	apiRoutes := mux.Group("/api")
+	{
+		apiRoutes.GET("/videos", func(ctx *gin.Context) {
+			ctx.JSON(200, VideoController.FindAll())
+
+		})
+
+		apiRoutes.POST("/videos", func(ctx *gin.Context) {
+			err := VideoController.Save(ctx)
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{
+					"ERROR": err.Error(),
+				})
+			} else {
+				ctx.JSON(http.StatusOK, gin.H{"MESSAGE": "vIDEO INPUT IS VALID!!!"})
+			}
+
+		})
+	}
+
+	viewRoutes := mux.Group("/view")
+
+	{
+		viewRoutes.GET("/videos", VideoController.ShowAll)
+	}
+
 	mux.Use(gin.Recovery(), middlewares.Logger(),
 		middlewares.BasicAuth(), gindump.Dump(),
 	)
-
-	mux.GET("/videos", func(ctx *gin.Context) {
-		ctx.JSON(200, VideoController.FindAll())
-
-	})
-
-	mux.POST("/videos", func(ctx *gin.Context) {
-		err := VideoController.Save(ctx)
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"ERROR": err.Error(),
-			})
-		} else {
-			ctx.JSON(http.StatusOK, gin.H{"MESSAGE": "vIDEO INPUT IS VALID!!!"})
-		}
-
-	})
 
 	mux.Run(":8090")
 
