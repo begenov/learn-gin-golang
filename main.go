@@ -15,6 +15,7 @@ import (
 var (
 	videoService    service.VedioService       = service.New()
 	VideoController controller.VideoController = controller.New(videoService)
+	loginController controller.LoginController = controller.NewLoginController(service.NewLoginService(), service.NewJWTService())
 )
 
 func sendLogOutput() {
@@ -34,7 +35,18 @@ func main() {
 
 	mux.LoadHTMLGlob("templates/*.html")
 
-	apiRoutes := mux.Group("/api")
+	mux.POST("/login", func(ctx *gin.Context) {
+		token := loginController.Login(ctx)
+		if token != "" {
+			ctx.JSON(http.StatusOK, gin.H{
+				"token": token,
+			})
+		} else {
+			ctx.JSON(http.StatusUnauthorized, nil)
+		}
+	})
+
+	apiRoutes := mux.Group("/api", middlewares.AuthorizeJWT())
 	{
 		apiRoutes.GET("/videos", func(ctx *gin.Context) {
 			ctx.JSON(200, VideoController.FindAll())
@@ -48,7 +60,7 @@ func main() {
 					"ERROR": err.Error(),
 				})
 			} else {
-				ctx.JSON(http.StatusOK, gin.H{"MESSAGE": "vIDEO INPUT IS VALID!!!"})
+				ctx.JSON(http.StatusOK, gin.H{"MESSAGE": "VIDEO INPUT IS VALID!!!"})
 			}
 
 		})
