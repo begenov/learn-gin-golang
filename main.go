@@ -18,6 +18,7 @@ var (
 	videoService    service.VedioService       = service.NewService(videoRepositroy)
 	loginService    service.LoginService       = service.NewLoginService()
 	jwtService      service.JWTService         = service.NewJWTService()
+	loginController controller.LoginController = controller.NewLoginController(loginService, jwtService)
 	VideoController controller.VideoController = controller.New(videoService)
 )
 
@@ -37,13 +38,13 @@ func main() {
 	mux.LoadHTMLGlob("templates/*.html")
 
 	mux.POST("/login", func(c *gin.Context) {
-		token := loginController.Login(ctx)
+		token := loginController.Login(c)
 		if token != "" {
-			ctx.JSON(http.StatusOK, gin.H{
+			c.JSON(http.StatusOK, gin.H{
 				"token": token,
 			})
 		} else {
-			ctx.JSON(http.StatusUnauthorized, nil)
+			c.JSON(http.StatusUnauthorized, nil)
 		}
 	})
 
