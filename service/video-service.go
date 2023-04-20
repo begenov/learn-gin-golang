@@ -16,7 +16,7 @@ type videoService struct {
 	videoRepository repository.VedeoRepository
 }
 
-func New(repo repository.VedeoRepository) VedioService {
+func NewService(repo repository.VedeoRepository) VedioService {
 	return &videoService{
 		videoRepository: repo,
 	}

@@ -20,3 +20,8 @@ type Video struct {
 	CreateAt    time.Time `json:"-" gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdateAt    time.Time `json:"-" gorm:"default:CURRENT_TIMESTAMP" json:"update_at"`
 }
+
+type Credentials struct {
+	Username string `json:"name"`
+	Password string `json:"passord"`
+}

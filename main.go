@@ -15,7 +15,9 @@ import (
 
 var (
 	videoRepositroy repository.VedeoRepository = repository.NewVideoRepository()
-	videoService    service.VedioService       = service.New(videoRepositroy)
+	videoService    service.VedioService       = service.NewService(videoRepositroy)
+	loginService    service.LoginService       = service.NewLoginService()
+	jwtService      service.JWTService         = service.NewJWTService()
 	VideoController controller.VideoController = controller.New(videoService)
 )
 
@@ -34,7 +36,18 @@ func main() {
 
 	mux.LoadHTMLGlob("templates/*.html")
 
-	apiRoutes := mux.Group("/api")
+	mux.POST("/login", func(c *gin.Context) {
+		token := loginController.Login(ctx)
+		if token != "" {
+			ctx.JSON(http.StatusOK, gin.H{
+				"token": token,
+			})
+		} else {
+			ctx.JSON(http.StatusUnauthorized, nil)
+		}
+	})
+
+	apiRoutes := mux.Group("/api", middlewares.AuthorizeJWT())
 	{
 		apiRoutes.GET("/videos", func(ctx *gin.Context) {
 			ctx.JSON(200, VideoController.FindAll())
