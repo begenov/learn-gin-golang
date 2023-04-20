@@ -22,6 +22,6 @@ type Video struct {
 }
 
 type Credentials struct {
-	Username string `json:"name"`
-	Password string `json:"passord"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }

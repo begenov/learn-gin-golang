@@ -40,6 +40,7 @@ func (jwtSrv jwtService) GenerateToken(name string, admin bool) string {
 			IssuedAt:  time.Now().Unix(),
 		},
 	}
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	t, err := token.SignedString([]byte(jwtSrv.secretKey))
 	if err != nil {
