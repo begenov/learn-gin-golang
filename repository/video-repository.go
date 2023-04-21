@@ -3,13 +3,14 @@ package repository
 import (
 	"github.com/begenov/learn-gin-golang/entity"
 	"github.com/jinzhu/gorm"
+
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-type VedeoRepository interface {
+type VideoRepository interface {
 	Save(video entity.Video)
-	Update(entity.Video)
-	Delete(entity.Video)
+	Update(video entity.Video)
+	Delete(video entity.Video)
 	FindAll() []entity.Video
 	CloseDB()
 }
@@ -18,7 +19,7 @@ type database struct {
 	connection *gorm.DB
 }
 
-func NewVideoRepository() VedeoRepository {
+func NewVideoRepository() VideoRepository {
 	db, err := gorm.Open("sqlite3", "test.db")
 	if err != nil {
 		panic("Failed to connect database")
@@ -26,6 +27,13 @@ func NewVideoRepository() VedeoRepository {
 	db.AutoMigrate(&entity.Video{}, &entity.Person{})
 	return &database{
 		connection: db,
+	}
+}
+
+func (db *database) CloseDB() {
+	err := db.connection.Close()
+	if err != nil {
+		panic("Failed to close database")
 	}
 }
 
@@ -45,11 +53,4 @@ func (db *database) FindAll() []entity.Video {
 	var videos []entity.Video
 	db.connection.Set("gorm:auto_preload", true).Find(&videos)
 	return videos
-}
-
-func (db *database) CloseDB() {
-	err := db.connection.Close()
-	if err != nil {
-		panic("Failed to close database")
-	}
 }

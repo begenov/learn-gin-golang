@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"github.com/begenov/learn-gin-golang/entity"
+	"github.com/begenov/learn-gin-golang/dto"
 	"github.com/begenov/learn-gin-golang/service"
 	"github.com/gin-gonic/gin"
 )
@@ -12,25 +12,26 @@ type LoginController interface {
 
 type loginController struct {
 	loginService service.LoginService
-	jwtService   service.JWTService
+	jWtService   service.JWTService
 }
 
-func NewLoginController(loginService service.LoginService, jwtService service.JWTService) LoginController {
+func NewLoginController(loginService service.LoginService,
+	jWtService service.JWTService) LoginController {
 	return &loginController{
 		loginService: loginService,
-		jwtService:   jwtService,
+		jWtService:   jWtService,
 	}
 }
 
-func (c *loginController) Login(ctx *gin.Context) string {
-	var credentials entity.Credentials
+func (controller *loginController) Login(ctx *gin.Context) string {
+	var credentials dto.Credentials
 	err := ctx.ShouldBind(&credentials)
 	if err != nil {
 		return ""
 	}
-	isAuthenticated := c.loginService.Login(credentials.Username, credentials.Password)
+	isAuthenticated := controller.loginService.Login(credentials.Username, credentials.Password)
 	if isAuthenticated {
-		return c.jwtService.GenerateToken(credentials.Username, true)
+		return controller.jWtService.GenerateToken(credentials.Username, true)
 	}
 	return ""
 }

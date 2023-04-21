@@ -1,0 +1,207 @@
+definitions:
+  dto.JWT:
+    properties:
+      token:
+        type: string
+    type: object
+  dto.Response:
+    properties:
+      message:
+        type: string
+    type: object
+  entity.Person:
+    properties:
+      age:
+        type: integer
+      email:
+        type: string
+      firstname:
+        type: string
+      id:
+        type: integer
+      lastname:
+        type: string
+    required:
+    - email
+    - firstname
+    - lastname
+    type: object
+  entity.Video:
+    properties:
+      author:
+        $ref: '#/definitions/entity.Person'
+        type: object
+      description:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      url:
+        type: string
+    required:
+    - author
+    - url
+    type: object
+info:
+  contact: {}
+  license: {}
+paths:
+  /auth/token:
+    post:
+      description: Authenticates a user and provides a JWT to Authorize API calls
+      operationId: Authentication
+      parameters:
+      - description: Username
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Password
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.JWT'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.Response'
+      summary: Provides a JSON Web Token
+  /videos:
+    get:
+      consumes:
+      - application/json
+      description: Get all the existing videos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Video'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - bearerAuth: []
+      summary: List existing videos
+      tags:
+      - videos
+      - list
+    post:
+      consumes:
+      - application/json
+      description: Create a new video
+      parameters:
+      - description: Create video
+        in: body
+        name: video
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Video'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - bearerAuth: []
+      summary: Create new videos
+      tags:
+      - videos
+      - create
+  /videos/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a single video
+      parameters:
+      - description: Video ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - bearerAuth: []
+      - bearerAuth: []
+      summary: Remove videos
+      tags:
+      - videos
+    put:
+      consumes:
+      - application/json
+      description: Update a single video
+      parameters:
+      - description: Video ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update video
+        in: body
+        name: video
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Video'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - bearerAuth: []
+      - bearerAuth: []
+      summary: Update videos
+      tags:
+      - videos
+securityDefinitions:
+  bearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

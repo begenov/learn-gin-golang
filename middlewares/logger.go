@@ -8,16 +8,14 @@ import (
 )
 
 func Logger() gin.HandlerFunc {
-	return gin.LoggerWithFormatter(
-		func(params gin.LogFormatterParams) string {
-			return fmt.Sprintf("%s - [%s] %s %s %d %s \n",
-				params.ClientIP,
-				params.TimeStamp.Format(time.RFC822),
-				params.Method,
-				params.Path,
-				params.StatusCode,
-				params.Latency,
-			)
-		},
-	)
+	return gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
+		return fmt.Sprintf("%s - [%s] %s %s %d %s \n",
+			param.ClientIP,
+			param.TimeStamp.Format(time.RFC822),
+			param.Method,
+			param.Path,
+			param.StatusCode,
+			param.Latency,
+		)
+	})
 }

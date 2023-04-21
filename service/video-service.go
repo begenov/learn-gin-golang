@@ -5,36 +5,38 @@ import (
 	"github.com/begenov/learn-gin-golang/repository"
 )
 
-type VedioService interface {
-	Save(entity.Video) entity.Video
+type VideoService interface {
+	Save(entity.Video) error
+	Update(entity.Video) error
+	Delete(entity.Video) error
 	FindAll() []entity.Video
-	Update(entity.Video)
-	Delete(entity.Video)
 }
 
 type videoService struct {
-	videoRepository repository.VedeoRepository
+	repository repository.VideoRepository
 }
 
-func NewService(repo repository.VedeoRepository) VedioService {
+func New(videoRepository repository.VideoRepository) VideoService {
 	return &videoService{
-		videoRepository: repo,
+		repository: videoRepository,
 	}
 }
 
-func (service *videoService) Save(video entity.Video) entity.Video {
-	service.videoRepository.Save(video)
-	return video
+func (service *videoService) Save(video entity.Video) error {
+	service.repository.Save(video)
+	return nil
+}
+
+func (service *videoService) Update(video entity.Video) error {
+	service.repository.Update(video)
+	return nil
+}
+
+func (service *videoService) Delete(video entity.Video) error {
+	service.repository.Delete(video)
+	return nil
 }
 
 func (service *videoService) FindAll() []entity.Video {
-	return service.videoRepository.FindAll()
-}
-
-func (service *videoService) Update(video entity.Video) {
-	service.videoRepository.Update(video)
-}
-
-func (service *videoService) Delete(video entity.Video) {
-	service.videoRepository.Delete(video)
+	return service.repository.FindAll()
 }

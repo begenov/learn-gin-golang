@@ -6,9 +6,8 @@ import (
 
 	"github.com/begenov/learn-gin-golang/entity"
 	"github.com/begenov/learn-gin-golang/service"
-	"github.com/begenov/learn-gin-golang/validators"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
+	"gopkg.in/go-playground/validator.v9"
 )
 
 type VideoController interface {
@@ -20,14 +19,13 @@ type VideoController interface {
 }
 
 type controller struct {
-	service service.VedioService
+	service service.VideoService
 }
 
 var validate *validator.Validate
 
-func New(service service.VedioService) VideoController {
+func New(service service.VideoService) VideoController {
 	validate = validator.New()
-	validate.RegisterValidation("is-cool", validators.ValidateCoolTitle)
 	return &controller{
 		service: service,
 	}
@@ -51,15 +49,6 @@ func (c *controller) Save(ctx *gin.Context) error {
 	return nil
 }
 
-func (c *controller) ShowAll(ctx *gin.Context) {
-	videos := c.service.FindAll()
-	data := gin.H{
-		"title":  "Video Page",
-		"videos": videos,
-	}
-	ctx.HTML(http.StatusOK, "index.html", data)
-}
-
 func (c *controller) Update(ctx *gin.Context) error {
 	var video entity.Video
 	err := ctx.ShouldBindJSON(&video)
@@ -71,7 +60,6 @@ func (c *controller) Update(ctx *gin.Context) error {
 	if err != nil {
 		return err
 	}
-
 	video.ID = id
 
 	err = validate.Struct(video)
@@ -88,8 +76,16 @@ func (c *controller) Delete(ctx *gin.Context) error {
 	if err != nil {
 		return err
 	}
-
 	video.ID = id
 	c.service.Delete(video)
 	return nil
+}
+
+func (c *controller) ShowAll(ctx *gin.Context) {
+	videos := c.service.FindAll()
+	data := gin.H{
+		"title":  "Video Page",
+		"videos": videos,
+	}
+	ctx.HTML(http.StatusOK, "index.html", data)
 }

@@ -5,17 +5,18 @@ type LoginService interface {
 }
 
 type loginService struct {
-	autorizedUsername string
-	autorizedPassword string
+	authorizedUsername string
+	authorizedPassword string
 }
 
 func NewLoginService() LoginService {
 	return &loginService{
-		autorizedUsername: "pragmatic",
-		autorizedPassword: "reviews",
+		authorizedUsername: "pragmatic",
+		authorizedPassword: "reviews",
 	}
 }
 
 func (service *loginService) Login(username string, password string) bool {
-	return service.autorizedUsername == username && service.autorizedPassword == password
+	return service.authorizedUsername == username &&
+		service.authorizedPassword == password
 }

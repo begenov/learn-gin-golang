@@ -1,23 +1,31 @@
-{{template "header.html"}}
+<!--index.html-->
+
+<!--Embed the header.html template-->
+{{ template "header.html" .}}
 
 <div class="album py-4 bg-light">
-    <div class="container">
+    <div class="container">  
         <div class="row">
-            {{range .videos}}
-            <div class="col-md-4">
-                <div class="card mb-4 shadow-sm">
-                    <div class="card-body">
-                        <iframe src="{{.URL}}" width="300" height="200"  frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        <p class="card-text">
-                            <h4>{{.Title}}</h4>
-                            <p>{{.Description}}</p>
-                        </p>
+            <!--Loop over the list of videos -->        
+            {{range .videos }}        
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">        
+                        <div class="card-body">
+                            <iframe width="300" height="200" 
+                            src="{{.URL}}"
+                            frameborder="0" allow="accelerometer; autoplay; 
+                            encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>    
+                            <p class="card-text">
+                                <h4>{{.Title}}</h4>
+                                <p>{{.Description}}</p>
+                            </p>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </div>        
             {{end}}
-        </div>
+        </div>          
     </div>
 </div>
 
-{{template "footer.html"}}
+<!--Embed the footer.html template-->
+{{ template "footer.html" .}}
